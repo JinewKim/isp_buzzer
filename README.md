@@ -45,8 +45,9 @@ WantedBy=multi-user.target
 
 
 
-3. NetworkManager Setup
+# 3. NetworkManager Setup
 
 WiFi setup -> priority 10
+
 
 
