@@ -53,17 +53,23 @@ def send_report(frame, use_report_id0_prefix=False):
     dev.close()
 
 
+
 if __name__ == '__main__':
     consumer = KafkaConsumer(KAFKA_TOPIC, bootstrap_servers=BOOTSTRAP_SERVERS, auto_offset_reset = 'latest', value_deserializer=lambda v: json.loads(v.decode('utf-8')))
-    while True:        
+    while True:
         for msg in consumer:
-            topic = msg.topic            
+            topic = msg.topic
             try:
                 risk = float(msg.value["risk"])
             except:
-                continue        
-
-            if risk >= 70:                
-                send_report(buzzer_on_frame(BLINK, BLINK, BLINK, BLINK, BLINK, SOUND))            
+                continue
+            
+            if risk >= 70:
+                send_report(buzzer_on_frame(BLINK, BLINK, BLINK, BLINK, BLINK, SOUND))
                 time.sleep(DURATION)
                 send_report(buzzer_off_frame())
+                while not consumer.assignment():
+                    consumer.poll(timeout_ms=100)
+                consumer.seek_to_end(*consumer.assignment())
+                break
+
