@@ -43,11 +43,13 @@ WantedBy=multi-user.target
 
 **$ journalctl -u isp-buzzer.service -f**
 
+**$ curl -sSL https://install.python-poetry.org | python3 -**
 
 
 # 3. NetworkManager Setup
 
 WiFi setup -> priority 10
+
 
 
 
