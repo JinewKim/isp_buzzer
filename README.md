@@ -57,7 +57,7 @@ WantedBy=multi-user.target
 
 WiFi setup -> priority 10
 
-# 4.
+# 4. USB 설정
 
 영구 해결(예시: plugdev 그룹 허용):
 
@@ -65,12 +65,13 @@ WiFi setup -> priority 10
 
 규칙 작성 /etc/udev/rules.d/99-hid-mydevice.rules
 
-KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1234", ATTRS{idProduct}=="abcd", MODE="0660", GROUP="plugdev", TAG+="uaccess"
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="04d8", ATTRS{idProduct}=="e73c", MODE="0660", GROUP="plugdev", TAG+="uaccess"
 
 
 (VID/PID는 16진수 소문자 4자리로)
 
 적용: sudo udevadm control --reload-rules && sudo udevadm trigger
+
 
 
 
