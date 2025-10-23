@@ -1,4 +1,11 @@
 # 0. Change a Kafka topic
+# 1.poetry 설치
+$ curl -sSL https://install.python-poetry.org | python3 -
+
+$ export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
+
+$ poetry install
+
 # 1.Add & Edit buzzer service
 
 **$ sudo nano /etc/systemd/system/isp-buzzer.service**
@@ -49,6 +56,7 @@ WantedBy=multi-user.target
 # 3. NetworkManager Setup
 
 WiFi setup -> priority 10
+
 
 
 
