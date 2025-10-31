@@ -1,5 +1,9 @@
 # 0. Change a Kafka topic
-# 1.poetry 설치
+# 1.tailscale & poetry 설치
+$ curl -fsSL https://tailscale.com/install.sh | sh
+
+$ sudo tailscale up
+
 $ curl -sSL https://install.python-poetry.org | python3 -
 
 $ export PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
@@ -71,6 +75,7 @@ KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="04d8", ATTRS{idProduct
 (VID/PID는 16진수 소문자 4자리로)
 
 적용: sudo udevadm control --reload-rules && sudo udevadm trigger
+
 
 
 
