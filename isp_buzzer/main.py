@@ -6,7 +6,10 @@ from kafka import KafkaConsumer
 
 
 BOOTSTRAP_SERVERS =['piai_kafka2.aiot.town:9092',]
-KAFKA_TOPIC = "DGSP-FIRE-INFERENCE-SM1"
+KAFKA_TOPIC = "DGSP-ZONE-INFERENCE-TAPO1"
+KAFKA_GROUP_ID = "isp-dgsp-buzzer-group"
+KAFKA_CLIENT_ID = "isp-dgsp-buzzer-2"
+
 
 BLINK = 0x02 # 0x00: OFF, 0x01: ON, 0x02: blink
 SOUND = 0x05 # 0x00: off 0x01~0x05: sound
@@ -23,7 +26,7 @@ sys.modules['kafka.vendor.six.moves'] = m
 # 16바이트 고정 프레임 생성
 def buzzer_on_frame(red_lamp, yellow_lamp, green_lamp, blue_lamp, white_lamp, sound):
     # 추정: [57, 00, {파라미터 6~8B}, 00,00, 63,f1, 00,00,00,00]
-    # 아래 예시는 '울림' 케이스에서 관측된 값과 일치하도록 구성    
+    # 아래 예시는 '울림' 케이스에서 관측된 값과 일치하도록 구성
     b = 0x01
     c = 0x01
     d = 0x01
@@ -55,7 +58,22 @@ def send_report(frame, use_report_id0_prefix=False):
 
 
 if __name__ == '__main__':
-    consumer = KafkaConsumer(KAFKA_TOPIC, bootstrap_servers=BOOTSTRAP_SERVERS, auto_offset_reset = 'latest', value_deserializer=lambda v: json.loads(v.decode('utf-8')))
+    consumer = KafkaConsumer(KAFKA_TOPIC,
+    bootstrap_servers=BOOTSTRAP_SERVERS,
+    auto_offset_reset = 'latest',
+    value_deserializer=lambda v: json.loads(v.decode('utf-8')),
+    client_id="KAFKA_CLIENT_ID",
+    group_id="KAFKA_GROUP_ID",
+    api_version=(3,7,0),
+    request_timeout_ms=30000,
+    reconnect_backoff_ms=1000,
+    reconnect_backoff_max_ms=10000,
+    retry_backoff_ms=200,
+    metadata_max_age_ms=180000)
+
+    while not consumer.assignment():
+        consumer.poll(timeout_ms=100)
+    consumer.seek_to_end(*consumer.assignment())
     while True:
         for msg in consumer:
             topic = msg.topic
@@ -63,7 +81,7 @@ if __name__ == '__main__':
                 risk = float(msg.value["risk"])
             except:
                 continue
-            
+
             if risk >= 70:
                 send_report(buzzer_on_frame(BLINK, BLINK, BLINK, BLINK, BLINK, SOUND))
                 time.sleep(DURATION)
@@ -72,4 +90,6 @@ if __name__ == '__main__':
                     consumer.poll(timeout_ms=100)
                 consumer.seek_to_end(*consumer.assignment())
                 break
+
+
 
