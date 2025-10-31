@@ -59,7 +59,10 @@ WantedBy=multi-user.target
 
 # 3. NetworkManager Setup
 
-WiFi setup -> priority 10
+sudo nmcli dev wifi connect "SSID이름" password "비밀번호" ifname wlan0 \
+    name "mywifi" \
+    autoconnect yes \
+    autoconnect-priority 10
 
 # 4. USB 설정
 
@@ -75,6 +78,7 @@ KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="04d8", ATTRS{idProduct
 (VID/PID는 16진수 소문자 4자리로)
 
 적용: sudo udevadm control --reload-rules && sudo udevadm trigger
+
 
 
 
